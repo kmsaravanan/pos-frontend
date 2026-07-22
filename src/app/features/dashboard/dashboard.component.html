@@ -37,7 +37,7 @@
       <div class="stat-icon-wrap stat-icon-warning"><mat-icon>warning</mat-icon></div>
       <div class="stat-body">
         <span class="stat-label">Low Stock Items</span>
-        <span class="stat-value">{{ lowStockProducts.length }}</span>
+        <span class="stat-value">{{ lowStockTotalElements }}</span>
         <span class="stat-sub">below minimum threshold</span>
       </div>
     </mat-card>
@@ -99,26 +99,26 @@
 
     <mat-card-content>
       <div class="table-wrapper">
-        <table mat-table [dataSource]="lowStockProducts" class="data-table">
+        <table mat-table [dataSource]="lowStockDataSource" matSort matSortActive="stockQuantity" matSortDirection="asc" class="data-table">
           <ng-container matColumnDef="sku">
-            <th mat-header-cell *matHeaderCellDef> SKU </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> SKU </th>
             <td mat-cell *matCellDef="let element"> {{element.sku}} </td>
           </ng-container>
 
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Product Name </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Product Name </th>
             <td mat-cell *matCellDef="let element" class="cell-name"> {{element.name}} </td>
           </ng-container>
 
           <ng-container matColumnDef="stockQuantity">
-            <th mat-header-cell *matHeaderCellDef> Current Stock </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Current Stock </th>
             <td mat-cell *matCellDef="let element">
               <span class="stock-badge stock-low">{{element.stockQuantity}}</span>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="minStockThreshold">
-            <th mat-header-cell *matHeaderCellDef> Threshold </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Threshold </th>
             <td mat-cell *matCellDef="let element"> {{element.minStockThreshold}} </td>
           </ng-container>
 
@@ -126,11 +126,20 @@
           <tr mat-row *matRowDef="let row; columns: lowStockColumns;"></tr>
         </table>
 
-        <div class="empty-state" *ngIf="lowStockProducts.length === 0">
+        <div class="empty-state" *ngIf="lowStockTotalElements === 0">
           <mat-icon>check_circle_outline</mat-icon>
           <p>All products are above their minimum stock threshold</p>
         </div>
       </div>
+
+      <mat-paginator
+        *ngIf="lowStockTotalElements > 0"
+        [length]="lowStockTotalElements"
+        [pageSize]="lowStockPageSize"
+        [pageIndex]="lowStockPageNumber"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onLowStockPageChange($event)">
+      </mat-paginator>
     </mat-card-content>
   </mat-card>
 

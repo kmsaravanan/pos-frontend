@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,7 @@ import { Router } from '@angular/router';
           <div class="login-avatar">
             <mat-icon>storefront</mat-icon>
           </div>
-          <h1 class="login-title">POS System</h1>
+          <h1 class="login-title">{{ businessName }}</h1>
           <p class="login-subtitle">Sign in to continue</p>
         </div>
 
@@ -164,6 +165,7 @@ import { Router } from '@angular/router';
   `]
 })
 export class LoginComponent {
+  businessName = environment.businessName;
   username = 'admin';
   password = 'admin123';
   error = '';

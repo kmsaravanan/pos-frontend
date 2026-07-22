@@ -44,6 +44,15 @@ export interface LowStockProduct {
   minStockThreshold: number;
 }
 
+export interface PagedResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -70,7 +79,7 @@ export class DashboardService {
     return this.api.get<CategorySales[]>(`/dashboard/sales-by-category?days=${days}`);
   }
 
-  getLowStockProducts(): Observable<LowStockProduct[]> {
-    return this.api.get<LowStockProduct[]>('/dashboard/low-stock');
+  getLowStockProducts(page: number = 0, size: number = 10): Observable<PagedResponse<LowStockProduct>> {
+    return this.api.get<PagedResponse<LowStockProduct>>(`/dashboard/low-stock?page=${page}&size=${size}`);
   }
 }

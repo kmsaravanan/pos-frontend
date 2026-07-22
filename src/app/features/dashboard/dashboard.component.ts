@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import {
@@ -21,15 +23,20 @@ const CATEGORY_COLORS = ['#2a5298', '#4fc3f7', '#66bb6a', '#ffa726', '#ef5350', 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, MatTableModule, BaseChartDirective],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, MatTableModule, MatSortModule, MatPaginatorModule, BaseChartDirective],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
   todaySales: TodaySales | null = null;
   invoiceStats: InvoiceStats | null = null;
   topProducts: TopProduct[] = [];
-  lowStockProducts: LowStockProduct[] = [];
+  lowStockDataSource = new MatTableDataSource<LowStockProduct>([]);
+  lowStockTotalElements = 0;
+  lowStockPageSize = 10;
+  lowStockPageNumber = 0;
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   lowStockColumns: string[] = ['sku', 'name', 'stockQuantity', 'minStockThreshold'];
 
@@ -125,10 +132,27 @@ export class DashboardComponent implements OnInit {
       error: (err) => console.error('Failed to load sales by category', err)
     });
 
-    this.dashboardService.getLowStockProducts().subscribe({
-      next: (products) => this.lowStockProducts = products,
+    this.loadLowStockProducts();
+  }
+
+  ngAfterViewInit(): void {
+    this.lowStockDataSource.sort = this.sort;
+  }
+
+  loadLowStockProducts(): void {
+    this.dashboardService.getLowStockProducts(this.lowStockPageNumber, this.lowStockPageSize).subscribe({
+      next: (res) => {
+        this.lowStockDataSource.data = res.content;
+        this.lowStockTotalElements = res.totalElements;
+      },
       error: (err) => console.error('Failed to load low stock products', err)
     });
+  }
+
+  onLowStockPageChange(event: PageEvent): void {
+    this.lowStockPageSize = event.pageSize;
+    this.lowStockPageNumber = event.pageIndex;
+    this.loadLowStockProducts();
   }
 
   goToProducts(): void {
