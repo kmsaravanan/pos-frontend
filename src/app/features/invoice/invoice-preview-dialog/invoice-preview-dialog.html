@@ -1,0 +1,20 @@
+<h2 mat-dialog-title style="display: flex; justify-content: space-between; align-items: center;">
+  <span>Invoice: {{ invoiceNumber }}</span>
+  <div>
+    <button mat-raised-button color="primary" (click)="downloadPdf()">
+      <mat-icon>download</mat-icon> Download PDF
+    </button>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</h2>
+<mat-dialog-content style="height: 100%; padding: 0;">
+  @if (pdfUrl) {
+    <iframe [src]="pdfUrl" style="width: 100%; height: 100%; border: none;"></iframe>
+  } @else {
+    <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+</mat-dialog-content>

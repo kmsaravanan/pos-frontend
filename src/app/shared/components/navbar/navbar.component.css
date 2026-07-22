@@ -1,0 +1,35 @@
+/* Pushes the logout button to the far right */
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Vertical alignment for the branding/logo area */
+mat-toolbar span:first-child {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Base button styling inside the toolbar */
+mat-toolbar button[mat-button] {
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Professional Active Link Style (Light Blue) */
+.active-link {
+  background-color: rgba(255, 255, 255, 0.12) !important; /* Subtle white highlight */
+  box-shadow: inset 0 -3px 0 0 #4fc3f7 !important; /* Professional light blue bottom accent */
+}
+
+/* Add a subtle pop to the icon when the link is active */
+.active-link mat-icon {
+  transform: scale(1.10); /* Reduced scale for a more professional look */
+  color: #4fc3f7; /* Matches the light blue bottom border */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth hover effect for non-active links */
+mat-toolbar button[mat-button]:not(.active-link):not([color="warn"]):hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}

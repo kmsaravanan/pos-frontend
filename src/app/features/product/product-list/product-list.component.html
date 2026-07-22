@@ -1,0 +1,82 @@
+<mat-card>
+  <mat-card-header style="display: flex; justify-content: space-between; align-items: center;">
+    <mat-card-title><h2>Inventory Management</h2></mat-card-title>
+    
+    <div style="display: flex; gap: 15px; align-items: center;">
+      <button mat-raised-button color="primary" (click)="openAddProductDialog()">
+        <mat-icon>add</mat-icon> Add Product
+      </button>
+      
+      <mat-form-field appearance="outline" style="width: 300px; margin-top: 20px;">
+        <mat-label>Search Name or SKU</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+      
+      <!-- ... existing columns (sku, name, category) ... -->
+      <ng-container matColumnDef="sku">
+        <th mat-header-cell *matHeaderCellDef> SKU </th>
+        <td mat-cell *matCellDef="let element"> {{element.sku}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Product Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <td mat-cell *matCellDef="let element"> {{element.category?.name || 'N/A'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef> Price ($) </th>
+        <td mat-cell *matCellDef="let element"> 
+          {{element.price}} 
+          <button mat-icon-button color="primary" (click)="editPrice(element)" style="font-size: 14px;">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="gstPercentage">
+        <th mat-header-cell *matHeaderCellDef> GST (%) </th>
+        <td mat-cell *matCellDef="let element"> {{element.gstPercentage}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="stockQuantity">
+        <th mat-header-cell *matHeaderCellDef> Stock </th>
+        <td mat-cell *matCellDef="let element"> 
+          <span [style.color]="element.stockQuantity < 5 ? 'red' : 'green'">
+            {{element.stockQuantity}}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Stock Adj. </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="accent" (click)="adjustStock(element.id)">
+            <mat-icon>inventory</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator 
+      [length]="totalElements"
+      [pageSize]="pageSize"
+      [pageIndex]="pageNumber"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+
+  </mat-card-content>
+</mat-card>

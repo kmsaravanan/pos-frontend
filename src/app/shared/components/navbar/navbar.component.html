@@ -1,0 +1,26 @@
+<mat-toolbar color="primary">
+  <span style="margin-right: 20px; display: flex; align-items: center;">
+    <mat-icon style="margin-right: 5px;">store</mat-icon> Marudham POS
+  </span>
+  
+  <!-- Using the new Angular 17+ @if syntax -->
+  @if (authService.isLoggedIn$ | async) {
+    <button mat-button routerLink="/products" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>inventory_2</mat-icon> Products
+    </button>
+    
+    <button mat-button routerLink="/invoices/create" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>point_of_sale</mat-icon> New Invoice
+    </button>
+    
+    <button mat-button routerLink="/invoices" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>receipt_long</mat-icon> Invoices
+    </button>
+
+    <span class="spacer"></span>
+    
+    <button mat-button (click)="logout()" color="warn">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
+  }
+</mat-toolbar>
