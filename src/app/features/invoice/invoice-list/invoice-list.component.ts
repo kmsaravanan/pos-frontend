@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../../core/services/api.service';
 import { InvoicePreviewDialogComponent } from '../invoice-preview-dialog/invoice-preview-dialog';
+import { RecordPaymentDialogComponent } from '../record-payment-dialog/record-payment-dialog';
 
 @Component({
   selector: 'app-invoice-list',
@@ -87,7 +88,34 @@ export class InvoiceListComponent implements OnInit {
     });
   }
 
-  // 2. DOWNLOAD INVOICE: Forces the secure file download
+  // 2. RECORD PAYMENT: Settle a pending (credit) invoice, fully or partially
+  recordPayment(invoice: any): void {
+    const dialogRef = this.dialog.open(RecordPaymentDialogComponent, {
+      width: '400px',
+      data: {
+        invoiceNumber: invoice.invoiceNumber,
+        netAmount: invoice.netAmount,
+        paidAmount: invoice.paidAmount,
+        balanceAmount: invoice.balanceAmount
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(amount => {
+      if (amount) {
+        this.api.put(`/invoices/${invoice.invoiceNumber}/close`, { paidAmount: amount }).subscribe({
+          next: () => {
+            this.snackBar.open('Payment recorded!', 'Close', { duration: 2000 });
+            this.loadInvoices();
+          },
+          error: (err) => {
+            this.snackBar.open('Error: ' + err.error.message, 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
+
+  // 3. DOWNLOAD INVOICE: Forces the secure file download
   downloadPdf(invoiceNumber: string): void {
     this.api.getPdf(`/invoices/${invoiceNumber}/pdf`).subscribe({
       next: (blob) => {

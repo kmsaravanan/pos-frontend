@@ -42,6 +42,9 @@
               <span class="status-badge" [class.status-pending]="element.status === 'PENDING'">
                 {{element.status}}
               </span>
+              <span class="balance-sub" *ngIf="element.status === 'PENDING'">
+                Bal: ${{element.balanceAmount}}
+              </span>
             </td>
           </ng-container>
 
@@ -58,6 +61,9 @@
               </button>
               <button mat-icon-button color="accent" (click)="downloadPdf(element.invoiceNumber)" matTooltip="Download PDF">
                 <mat-icon>picture_as_pdf</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" *ngIf="element.status === 'PENDING'" (click)="recordPayment(element)" matTooltip="Record Payment">
+                <mat-icon>payments</mat-icon>
               </button>
             </td>
           </ng-container>

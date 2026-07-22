@@ -86,6 +86,14 @@
   color: #b3261e;
 }
 
+.balance-sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #b3261e;
+  font-weight: 500;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
