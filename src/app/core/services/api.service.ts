@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   // Make sure this matches your Spring Boot context path!
-  private baseUrl = 'http://localhost:8080/invoicesys/api'; 
+  //private baseUrl = 'http://localhost:8080/invoicesys/api'; 
+    //private baseUrl = `${window.location.origin}/invoicesys/api`; 
+  private baseUrl = environment.apiUrl || `${window.location.origin}/invoicesys/api`;
+
 
   constructor(private http: HttpClient) {}
 

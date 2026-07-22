@@ -114,6 +114,25 @@ export class ProductListComponent implements OnInit {
     }
   }
 
+  // NEW: Edit low-stock threshold inline prompt
+  editMinStockThreshold(product: any): void {
+    const newThresholdStr = prompt(`Edit low-stock threshold for ${product.name}:`, product.minStockThreshold);
+    if (newThresholdStr !== null) {
+      const newThreshold = parseInt(newThresholdStr, 10);
+      if (!isNaN(newThreshold) && newThreshold >= 0) {
+        this.api.post(`/products/${product.id}/update-threshold`, { minStockThreshold: newThreshold }).subscribe({
+          next: () => {
+            this.snackBar.open('Low-stock threshold updated!', 'Close', { duration: 2000 });
+            this.loadProducts();
+          },
+          error: (err) => {
+            this.snackBar.open('Error: ' + err.error.message, 'Close', { duration: 3000 });
+          }
+        });
+      }
+    }
+  }
+
   adjustStock(productId: number): void {
     const qtyStr = prompt('Enter quantity change (e.g., 10 for restock, -5 for damaged):');
     if (qtyStr !== null) {

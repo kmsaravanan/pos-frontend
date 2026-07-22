@@ -5,6 +5,10 @@
   
   <!-- Using the new Angular 17+ @if syntax -->
   @if (authService.isLoggedIn$ | async) {
+    <button mat-button routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>space_dashboard</mat-icon> Dashboard
+    </button>
+
     <button mat-button routerLink="/products" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
       <mat-icon>inventory_2</mat-icon> Products
     </button>

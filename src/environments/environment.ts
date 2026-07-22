@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  gstEnabled: false // Set this to false to hide GST calculations on the frontend
+  gstEnabled: false,
+  apiUrl: 'http://localhost:8080/invoicesys/api' // Local Docker/API
 };

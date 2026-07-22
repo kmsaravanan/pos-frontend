@@ -1,25 +1,26 @@
-<div style="display: flex; gap: 20px; margin: 20px; height: calc(100vh - 100px);">
-      
-    <!-- LEFT SIDE: Product Search -->
-    <mat-card style="flex: 1; display: flex; flex-direction: column;">
-      <mat-card-header>
-        <mat-card-title><h2>Search Products</h2></mat-card-title>
-      </mat-card-header>
-      <mat-card-content style="flex: 1; display: flex; flex-direction: column;">
-        <mat-form-field appearance="outline" style="width: 100%;">
-          <mat-label>Scan or Type SKU / Name</mat-label>
-          <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
+<div class="pos-page">
 
-        <table mat-table [dataSource]="searchDataSource" style="width: 100%;">
+  <!-- LEFT SIDE: Product Search -->
+  <mat-card class="pos-panel search-panel">
+    <mat-card-header class="panel-header">
+      <mat-card-title><h2><mat-icon class="title-icon">search</mat-icon> Search Products</h2></mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="panel-content">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Scan or Type SKU / Name</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="searchDataSource" class="data-table">
           <ng-container matColumnDef="sku">
             <th mat-header-cell *matHeaderCellDef> SKU </th>
             <td mat-cell *matCellDef="let element"> {{element.sku}} </td>
           </ng-container>
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <td mat-cell *matCellDef="let element" class="cell-name"> {{element.name}} </td>
           </ng-container>
           <ng-container matColumnDef="price">
             <th mat-header-cell *matHeaderCellDef> Price </th>
@@ -27,12 +28,16 @@
           </ng-container>
           <ng-container matColumnDef="stock">
             <th mat-header-cell *matHeaderCellDef> Stock </th>
-            <td mat-cell *matCellDef="let element"> {{element.stockQuantity}} </td>
+            <td mat-cell *matCellDef="let element">
+              <span class="stock-badge" [class.stock-low]="getAvailableStock(element) <= 0">
+                {{ getAvailableStock(element) <= 0 ? 'Out of stock' : getAvailableStock(element) }}
+              </span>
+            </td>
           </ng-container>
           <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef> Add </th>
             <td mat-cell *matCellDef="let element">
-              <button mat-mini-fab color="primary" (click)="addToCart(element)">
+              <button mat-mini-fab color="primary" (click)="addToCart(element)" [disabled]="getAvailableStock(element) <= 0" [matTooltip]="getAvailableStock(element) <= 0 ? 'Out of stock' : 'Add to cart'">
                 <mat-icon>add</mat-icon>
               </button>
             </td>
@@ -40,103 +45,109 @@
           <tr mat-header-row *matHeaderRowDef="searchColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: searchColumns;"></tr>
         </table>
-      </mat-card-content>
-    </mat-card>
 
-    <!-- RIGHT SIDE: Cart & Payment -->
-    <mat-card style="flex: 1.5; display: flex; flex-direction: column;">
-      <mat-card-header>
-        <mat-card-title><h2>Current Cart</h2></mat-card-title>
-      </mat-card-header>
-      <mat-card-content style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-        
-        <!-- Cart Table -->
-        <div style="flex: 1; overflow-y: auto;">
-          <table mat-table [dataSource]="cartDataSource" style="width: 100%;">
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef> Item </th>
-              <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
-            </ng-container>
-            <ng-container matColumnDef="price">
-              <th mat-header-cell *matHeaderCellDef> Price </th>
-              <td mat-cell *matCellDef="let element"> ${{element.price}} </td>
-            </ng-container>
-            <ng-container matColumnDef="quantity">
-              <th mat-header-cell *matHeaderCellDef> Qty </th>
-              <td mat-cell *matCellDef="let element"> 
+        <div class="empty-state" *ngIf="searchDataSource.data.length === 0">
+          <mat-icon>search</mat-icon>
+          <p>Start typing to search products</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- RIGHT SIDE: Cart & Payment -->
+  <mat-card class="pos-panel cart-panel">
+    <mat-card-header class="panel-header">
+      <mat-card-title><h2><mat-icon class="title-icon">shopping_cart</mat-icon> Current Cart</h2></mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="panel-content cart-content">
+
+      <!-- Cart Table -->
+      <div class="table-wrapper cart-table-wrapper">
+        <table mat-table [dataSource]="cartDataSource" class="data-table">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Item </th>
+            <td mat-cell *matCellDef="let element" class="cell-name"> {{element.productName}} </td>
+          </ng-container>
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef> Price </th>
+            <td mat-cell *matCellDef="let element"> ${{element.price}} </td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Qty </th>
+            <td mat-cell *matCellDef="let element" class="qty-cell">
+              <span class="qty-cell-inner">
                 <button mat-icon-button (click)="changeQty(element, -1)"><mat-icon>remove</mat-icon></button>
-                {{element.quantity}}
-                <button mat-icon-button (click)="changeQty(element, 1)"><mat-icon>add</mat-icon></button>
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="total">
-              <th mat-header-cell *matHeaderCellDef> Total </th>
-              <td mat-cell *matCellDef="let element"> ${{element.totalPrice}} </td>
-            </ng-container>
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef> Del </th>
-              <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" (click)="removeFromCart(element)"><mat-icon>delete</mat-icon></button>
-              </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="cartColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: cartColumns;"></tr>
-          </table>
+                <span class="qty-value">{{element.quantity}}</span>
+                <button mat-icon-button (click)="changeQty(element, 1)" [disabled]="element.quantity >= element.stockQuantity" [matTooltip]="element.quantity >= element.stockQuantity ? 'No more stock available' : ''"><mat-icon>add</mat-icon></button>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef> Total </th>
+            <td mat-cell *matCellDef="let element" class="cell-strong"> ${{element.totalPrice}} </td>
+          </ng-container>
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef> Del </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="warn" (click)="removeFromCart(element)"><mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="cartColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: cartColumns;"></tr>
+        </table>
+
+        <div class="empty-state" *ngIf="cartDataSource.data.length === 0">
+          <mat-icon>shopping_cart</mat-icon>
+          <p>Cart is empty</p>
+        </div>
+      </div>
+
+      <!-- Summary & Payment Section -->
+      <div class="summary-section">
+        <div class="summary-row">
+          <span>Sub Total:</span> <strong>${{ subTotal }}</strong>
         </div>
 
-        <!-- Summary & Payment Section -->
-        <!-- Summary & Payment Section -->
-        <div style="border-top: 2px solid #e0e0e0; padding-top: 15px; margin-top: 15px;">
-          <div style="display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 10px;">
-            <span>Sub Total:</span> <strong>${{ subTotal }}</strong>
-          </div>
-          
-          <!-- HIDDEN IF GST IS DISABLED -->
-          <div *ngIf="isGstEnabled" style="display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 10px;">
-            <span>GST:</span> <strong>${{ totalGst }}</strong>
-          </div>
+        <div class="summary-row" *ngIf="isGstEnabled">
+          <span>GST:</span> <strong>${{ totalGst }}</strong>
+        </div>
 
-          <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label>Discount ($)</mat-label>
-            <input matInput type="number" [(ngModel)]="discount" (ngModelChange)="calculateTotals()">
+        <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic" *ngIf="showDiscountField">
+          <mat-label>Discount ($)</mat-label>
+          <input matInput type="number" [(ngModel)]="discount" (ngModelChange)="calculateTotals()">
+        </mat-form-field>
+
+        <div class="net-amount-row">
+          <span>Net Payable:</span> <span>${{ netAmount }}</span>
+        </div>
+
+        <div class="customer-row">
+          <mat-form-field appearance="outline" class="flex-field" subscriptSizing="dynamic">
+            <mat-label>Customer Phone</mat-label>
+            <input matInput [(ngModel)]="customerPhone" (ngModelChange)="onPhoneSearch()">
+            <mat-icon matSuffix>person_search</mat-icon>
           </mat-form-field>
-          <div style="display: flex; justify-content: space-between; font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #1a237e;">
-            <span>Net Payable:</span> <span>${{ netAmount }}</span>
-          </div>
-
-          <div style="display: flex; gap: 10px;">
-            <mat-form-field appearance="outline" style="flex: 1;">
-              <mat-label>Customer Name</mat-label>
-              <input matInput [(ngModel)]="customerName">
-            </mat-form-field>
-          <div style="display: flex; gap: 10px;">
-            <mat-form-field appearance="outline" style="flex: 1;">
-              <mat-label>Customer Phone</mat-label>
-              <input matInput [(ngModel)]="customerPhone" (ngModelChange)="onPhoneSearch()">
-              <mat-icon matSuffix>person_search</mat-icon>
-            </mat-form-field>
-            <mat-form-field appearance="outline" style="flex: 1;">
-              <mat-label>Customer Name</mat-label>
-              <input matInput [(ngModel)]="customerName" [readonly]="isExistingCustomer">
-            </mat-form-field>
-          </div>
-
-            <mat-form-field appearance="outline" style="flex: 1;">
-              <mat-label>Payment Method</mat-label>
-              <mat-select [(ngModel)]="paymentMethod">
-                <mat-option value="CASH">Cash</mat-option>
-                <mat-option value="CARD">Card</mat-option>
-                <mat-option value="UPI">UPI</mat-option>
-                <mat-option value="CREDIT">Credit</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <button mat-raised-button color="primary" style="width: 100%; padding: 15px; font-size: 18px;" (click)="submitInvoice()">
-            <mat-icon>receipt</mat-icon> Generate Invoice
-          </button>
+          <mat-form-field appearance="outline" class="flex-field" subscriptSizing="dynamic">
+            <mat-label>Customer Name</mat-label>
+            <input matInput [(ngModel)]="customerName" [readonly]="isExistingCustomer">
+          </mat-form-field>
         </div>
 
-      </mat-card-content>
-    </mat-card>
-  </div>
+        <mat-form-field appearance="outline" class="full-width payment-field" subscriptSizing="dynamic">
+          <mat-label>Payment Method</mat-label>
+          <mat-select [(ngModel)]="paymentMethod">
+            <mat-option value="CASH">Cash</mat-option>
+            <mat-option value="CARD">Card</mat-option>
+            <mat-option value="UPI">UPI</mat-option>
+            <mat-option value="CREDIT">Credit</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="full-width submit-btn" (click)="submitInvoice()">
+          <mat-icon>receipt</mat-icon> Generate Invoice
+        </button>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

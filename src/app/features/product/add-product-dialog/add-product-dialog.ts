@@ -31,6 +31,7 @@ export class AddProductDialogComponent {
       price: [0, [Validators.required, Validators.min(0.01)]],
       gstPercentage: [this.isGstEnabled ? 18 : 0, Validators.required],
       stockQuantity: [0, [Validators.required, Validators.min(0)]],
+      minStockThreshold: [5, [Validators.required, Validators.min(0)]],
       categoryName: ['General']
     });
   }

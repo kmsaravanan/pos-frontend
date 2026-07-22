@@ -1,83 +1,85 @@
-<mat-card>
-  <mat-card-header style="display: flex; justify-content: space-between; align-items: center;">
-    <mat-card-title><h2>Invoice History</h2></mat-card-title>
-    <mat-form-field appearance="outline" style="width: 300px; margin-top: 20px;">
-      <mat-label>Search Invoice # or Customer</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-  </mat-card-header>
-  <mat-card-content>
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
-      
-      <ng-container matColumnDef="invoiceNumber">
-        <th mat-header-cell *matHeaderCellDef> Invoice # </th>
-        <td mat-cell *matCellDef="let element"> {{element.invoiceNumber}} </td>
-      </ng-container>
+<div class="page">
+  <mat-card class="page-card">
+    <mat-card-header class="page-header">
+      <mat-card-title>
+        <h2><mat-icon class="title-icon">receipt_long</mat-icon> Invoice History</h2>
+      </mat-card-title>
 
-      <ng-container matColumnDef="customerName">
-        <th mat-header-cell *matHeaderCellDef> Customer </th>
-        <td mat-cell *matCellDef="let element"> {{element.customerName}} </td>
-      </ng-container>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Invoice # or Customer</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </mat-card-header>
 
-      <ng-container matColumnDef="netAmount">
-        <th mat-header-cell *matHeaderCellDef> Net Amount </th>
-        <td mat-cell *matCellDef="let element"> ${{element.netAmount}} </td>
-      </ng-container>
+    <mat-card-content>
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" class="data-table">
 
-      <ng-container matColumnDef="paymentMethod">
-        <th mat-header-cell *matHeaderCellDef> Payment </th>
-        <td mat-cell *matCellDef="let element"> {{element.paymentMethod}} </td>
-      </ng-container>
+          <ng-container matColumnDef="invoiceNumber">
+            <th mat-header-cell *matHeaderCellDef> Invoice # </th>
+            <td mat-cell *matCellDef="let element" class="cell-strong"> {{element.invoiceNumber}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let element"> 
-          <span [style.color]="element.status === 'PENDING' ? 'red' : 'green'" style="font-weight: bold;">
-            {{element.status}}
-          </span>
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef> Customer </th>
+            <td mat-cell *matCellDef="let element"> {{element.customerName}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef> Date </th>
-        <td mat-cell *matCellDef="let element"> {{element.createdAt | date:'dd/MM/yyyy hh:mm a'}} </td>
-      </ng-container>
+          <ng-container matColumnDef="netAmount">
+            <th mat-header-cell *matHeaderCellDef> Net Amount </th>
+            <td mat-cell *matCellDef="let element" class="cell-strong"> ${{element.netAmount}} </td>
+          </ng-container>
 
-      <!-- <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" (click)="downloadPdf(element.invoiceNumber)" matTooltip="Download PDF">
-            <mat-icon>picture_as_pdf</mat-icon>
-          </button>
-        </td>
-      </ng-container> -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let element">
-          <!-- View Button: Opens the Dialog Modal -->
-          <button mat-icon-button color="primary" (click)="viewInvoice(element.invoiceNumber)" matTooltip="View Invoice">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          
-          <!-- Download Button: Triggers Secure File Download -->
-          <button mat-icon-button color="accent" (click)="downloadPdf(element.invoiceNumber)" matTooltip="Download PDF">
-            <mat-icon>picture_as_pdf</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="paymentMethod">
+            <th mat-header-cell *matHeaderCellDef> Payment </th>
+            <td mat-cell *matCellDef="let element"> {{element.paymentMethod}} </td>
+          </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="status-badge" [class.status-pending]="element.status === 'PENDING'">
+                {{element.status}}
+              </span>
+            </td>
+          </ng-container>
 
-    <mat-paginator 
-      [length]="totalElements"
-      [pageSize]="pageSize"
-      [pageIndex]="pageNumber"
-      [pageSizeOptions]="[10, 20, 50]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <td mat-cell *matCellDef="let element"> {{element.createdAt | date:'dd/MM/yyyy hh:mm a'}} </td>
+          </ng-container>
 
-  </mat-card-content>
-</mat-card>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary" (click)="viewInvoice(element.invoiceNumber)" matTooltip="View Invoice">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="downloadPdf(element.invoiceNumber)" matTooltip="Download PDF">
+                <mat-icon>picture_as_pdf</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div class="empty-state" *ngIf="dataSource.data.length === 0">
+          <mat-icon>receipt_long</mat-icon>
+          <p>No invoices found</p>
+        </div>
+      </div>
+
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="pageNumber"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+
+    </mat-card-content>
+  </mat-card>
+</div>

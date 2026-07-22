@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiService } from '../../../core/services/api.service';
 import { environment } from '../../../../environments/environment'; // Import environment
 
@@ -20,7 +21,7 @@ import { environment } from '../../../../environments/environment'; // Import en
   imports: [
     CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule,
     MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSnackBarModule,
-    MatDialogModule // <-- Make sure MatDialogModule is here
+    MatDialogModule, MatTooltipModule // <-- Make sure MatDialogModule is here
 
   ],
   templateUrl: './invoice-create.html',
@@ -28,7 +29,10 @@ import { environment } from '../../../../environments/environment'; // Import en
 })
 export class InvoiceCreateComponent {
   // Expose the environment variable to the HTML template
-  isGstEnabled: boolean = environment.gstEnabled; 
+  isGstEnabled: boolean = environment.gstEnabled;
+
+  // Discount field is hidden for now; flip to true to bring it back
+  showDiscountField: boolean = false;
 
   searchDataSource = new MatTableDataSource<any>([]);
   cartDataSource = new MatTableDataSource<any>([]);
@@ -68,7 +72,19 @@ export class InvoiceCreateComponent {
     }, 300);
   }
 
+  // Remaining stock for a product, accounting for quantity already added to the cart
+  getAvailableStock(product: any): number {
+    const existingItem = this.cartItems.find(item => item.productId === product.id);
+    const usedQty = existingItem ? existingItem.quantity : 0;
+    return product.stockQuantity - usedQty;
+  }
+
   addToCart(product: any): void {
+    if (this.getAvailableStock(product) <= 0) {
+      this.snackBar.open(`${product.name} is out of stock!`, 'Close', { duration: 2500 });
+      return;
+    }
+
     const existingItem = this.cartItems.find(item => item.productId === product.id);
     if (existingItem) {
       existingItem.quantity++;
@@ -79,6 +95,7 @@ export class InvoiceCreateComponent {
         productName: product.name,
         price: product.price,
         gstPercentage: product.gstPercentage,
+        stockQuantity: product.stockQuantity,
         quantity: 1,
         totalPrice: product.price
       });
@@ -87,6 +104,11 @@ export class InvoiceCreateComponent {
   }
 
   changeQty(item: any, change: number): void {
+    if (change > 0 && item.quantity >= item.stockQuantity) {
+      this.snackBar.open(`Only ${item.stockQuantity} unit(s) of ${item.productName} in stock!`, 'Close', { duration: 2500 });
+      return;
+    }
+
     item.quantity += change;
     if (item.quantity <= 0) {
       this.removeFromCart(item);
