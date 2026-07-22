@@ -4,6 +4,7 @@ import { ProductListComponent } from './features/product/product-list/product-li
 import { InvoiceCreateComponent } from './features/invoice/invoice-create/invoice-create.component';
 import { InvoiceListComponent } from './features/invoice/invoice-list/invoice-list.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { SettingsComponent } from './features/settings/settings.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -13,4 +14,5 @@ export const routes: Routes = [
   { path: 'products', component: ProductListComponent, canActivate: [authGuard] },
   { path: 'invoices/create', component: InvoiceCreateComponent, canActivate: [authGuard] },
   { path: 'invoices', component: InvoiceListComponent, canActivate: [authGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
 ];

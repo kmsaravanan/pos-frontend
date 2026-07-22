@@ -1,0 +1,75 @@
+<div class="page">
+  <mat-card class="page-card">
+    <mat-card-header class="page-header">
+      <mat-card-title>
+        <h2><mat-icon class="title-icon">business</mat-icon> Company Details</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="saveCompanyDetails()" #companyForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Company Name</mat-label>
+          <input matInput [(ngModel)]="company.name" name="name" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>GST Number</mat-label>
+          <input matInput [(ngModel)]="company.gstNumber" name="gstNumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+          <input matInput [(ngModel)]="company.address" name="address" required>
+        </mat-form-field>
+
+        <div class="field-row">
+          <mat-form-field appearance="outline" class="flex-field">
+            <mat-label>Phone</mat-label>
+            <input matInput [(ngModel)]="company.phone" name="phone">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="flex-field">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [(ngModel)]="company.email" name="email">
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="companyForm.invalid || savingCompany">
+          <mat-icon>save</mat-icon> Save Company Details
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="page-card">
+    <mat-card-header class="page-header">
+      <mat-card-title>
+        <h2><mat-icon class="title-icon">lock</mat-icon> Change Password</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Current Password</mat-label>
+          <input matInput type="password" [(ngModel)]="currentPassword" name="currentPassword" required autocomplete="current-password">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>New Password</mat-label>
+          <input matInput type="password" [(ngModel)]="newPassword" name="newPassword" required minlength="6" autocomplete="new-password">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirm New Password</mat-label>
+          <input matInput type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required autocomplete="new-password">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid || savingPassword">
+          <mat-icon>save</mat-icon> Update Password
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

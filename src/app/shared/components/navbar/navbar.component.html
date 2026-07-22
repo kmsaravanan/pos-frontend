@@ -21,6 +21,10 @@
       <mat-icon>receipt_long</mat-icon> Invoices
     </button>
 
+    <button mat-button routerLink="/settings" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>settings</mat-icon> Settings
+    </button>
+
     <span class="spacer"></span>
     
     <button mat-button (click)="logout()" color="warn">

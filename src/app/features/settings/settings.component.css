@@ -1,0 +1,60 @@
+.page {
+  padding: 24px;
+  box-sizing: border-box;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.page-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.page-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.title-icon {
+  color: #2a5298;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.flex-field {
+  flex: 1;
+}
+
+button[type="submit"] {
+  align-self: flex-start;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
