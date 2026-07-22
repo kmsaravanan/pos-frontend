@@ -166,8 +166,8 @@ import { environment } from '../../../../environments/environment';
 })
 export class LoginComponent {
   businessName = environment.businessName;
-  username = 'admin';
-  password = 'admin123';
+  username = '';
+  password = '';
   error = '';
   loading = false;
   showPassword = false;
